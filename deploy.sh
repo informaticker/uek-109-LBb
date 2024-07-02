@@ -88,4 +88,4 @@ tput cud 2
 tput el
 
 echo "Deployment completed successfully! ^w^"
-echo
+echo "Total execution time: $duration seconds."
