@@ -35,6 +35,13 @@ spec:
                 secretKeyRef:
                   name: counter-database
                   key: database-name
+          volumeMounts:
+            - name: postgresql-data
+              mountPath: /var/lib/pgsql/data
+      volumes:
+        - name: postgresql-data
+          persistentVolumeClaim:
+            claimName: counter-database-pvc
 
 ---
 apiVersion: v1
