@@ -2,8 +2,8 @@
 # IMPORTANT!! 
 # Change this to your github username.
 # (lowercase or else docker will complain)
-GITHUB_USERNAME="informaticker"
-#GITHUB_USERNAME="your_github_username"
+#GITHUB_USERNAME="informaticker"
+GITHUB_USERNAME="your_github_username"
 VERSION="v1"
 show_progress() {
     local current=$1
