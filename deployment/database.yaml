@@ -1,0 +1,50 @@
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: counter-database
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: counter-database
+  template:
+    metadata:
+      labels:
+        app: counter-database
+    spec:
+      containers:
+        - name: counter-database
+          image: quay.io/centos7/postgresql-10-centos7:20221109
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRESQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: counter-database
+                  key: database-user
+            - name: POSTGRESQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: counter-database
+                  key: database-password
+            - name: POSTGRESQL_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: counter-database
+                  key: database-name
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: counter-database
+spec:
+  selector:
+    app: counter-database
+  ports:
+    - protocol: TCP
+      port: 5432
+      targetPort: 5432

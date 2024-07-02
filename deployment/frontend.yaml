@@ -1,0 +1,57 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: counter-frontend
+  labels:
+    app: counter-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: counter-frontend
+  template:
+    metadata:
+      labels:
+        app: counter-frontend
+    spec:
+      containers:
+      - name: counter-frontend
+        image: ghcr.io/informaticker/zli-counter-frontend:v1
+        ports:
+        - containerPort: 3000
+        env:
+        - name: BACKEND_URL
+          valueFrom:
+            configMapKeyRef:
+              name: counter-config
+              key: BACKEND_URL
+        - name: npm_config_cache
+          value: ./.npm-cache
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: counter-frontend
+spec:
+  selector:
+    app: counter-frontend
+  ports:
+    - protocol: TCP
+      port: 3000
+      targetPort: 3000
+
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: counter-frontend
+spec:
+  to:
+    kind: Service
+    name: counter-frontend
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+

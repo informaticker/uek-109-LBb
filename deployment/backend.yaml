@@ -1,0 +1,76 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: counter-backend
+  labels:
+    app: counter-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: counter-backend
+  template:
+    metadata:
+      labels:
+        app: counter-backend
+    spec:
+      containers:
+      - name: counter-backend
+        image: ghcr.io/informaticker/zli-counter-backend:v1
+        ports:
+        - containerPort: 8080
+        env:
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: counter-database
+              key: database-user
+        - name: DB_NAME
+          valueFrom:
+            secretKeyRef:
+              name: counter-database
+              key: database-name
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: counter-database
+              key: database-password
+        - name: DB_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: counter-config
+              key: DB_HOST
+        - name: PASSPHRASE
+          valueFrom:
+            secretKeyRef:
+              name: counter-secret
+              key: PASSPHRASE
+        - name: npm_config_cache
+          value: ./.npm-cache
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: counter-backend
+spec:
+  selector:
+    app: counter-backend
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: counter-backend
+spec:
+  to:
+    kind: Service
+    name: counter-backend
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
