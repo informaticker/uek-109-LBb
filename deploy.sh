@@ -15,7 +15,6 @@ docker build -t ghcr.io/${GITHUB_USERNAME}/zli-counter-frontend:${VERSION} count
 docker push ghcr.io/${GITHUB_USERNAME}/zli-counter-backend:${VERSION}
 docker push ghcr.io/${GITHUB_USERNAME}/zli-counter-frontend:${VERSION}
 replace_placeholders
-
 oc apply -f deployment/configmap.yaml
 oc apply -f deployment/secrets.yaml
 oc apply -f deployment/database.yaml
